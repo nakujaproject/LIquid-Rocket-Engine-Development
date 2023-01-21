@@ -1,4 +1,5 @@
-# Liquid-Rocket-Engine-Development
+![Nakuja Project Logo](resources/images/Nakuja%20Logo.jpg)
+# **Liquid-Rocket-Engine-Development** 
 ## Introduction
 This is a repository to hold information on the dvelopment of a liquid rocket engine for the Nakuja Project
 
