@@ -16,3 +16,5 @@ next up, our goals are:
 - [] water test (low pressure)
 - [] water tet (high pressure tests)
 - [] ignition test
+
+## Citations
