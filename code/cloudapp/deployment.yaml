@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-grafana-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb-grafana
+  template:
+    metadata:
+      labels:
+        app: influxdb-grafana
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:latest
+        ports:
+        - name: influxdb-port
+          containerPort: 8086
+        env:
+        - name: INFLUXDB_DB
+          value: "database_name"
+        - name: INFLUXDB_ADMIN_USER
+          value: "admin_user"
+        - name: INFLUXDB_ADMIN_PASSWORD
+          value: "secret_password"
+        volumeMounts:
+        - name: influxdb-storage
+          mountPath: /var/lib/influxdb
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_INSTALL_PLUGINS
+          value: grafana-clock-panel,grafana-simple-json-datasource
+        - name: GF_DATABASE_TYPE
+          value: influxdb
+        - name: GF_DATABASE_URL
+          value: http://influxdb:8086
+        - name: GF_DATABASE_NAME
+          value: grafana
+      volumes:
+      - name: influxdb-storage
+        persistentVolumeClaim:
+          claimName: influxdb-storage-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+spec:
+  selector:
+    app: influxdb-grafana
+  ports:
+  - name: influxdb
+    port: 8086
+    targetPort: 8086
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  selector:
+    app: influxdb-grafana
+  ports:
+  - name: grafana
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-storage-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
