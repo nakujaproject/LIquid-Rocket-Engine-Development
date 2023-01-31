@@ -17,4 +17,7 @@ next up, our goals are:
 - [] water tet (high pressure tests)
 - [] ignition test
 
+## Points to note:
+- -> We noticed from designing of spacer thatit is wise to design the spcer after the fabrication of the combustion chamber has taken place. This is because of the inconsistencies observed in the dimensions of the combustion chamber after fabrication tht may affect the spaer dimensional accuracy
+
 ## Citations
