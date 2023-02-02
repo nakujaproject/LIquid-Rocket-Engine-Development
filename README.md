@@ -14,7 +14,7 @@ so far, the following has been achieved previously:
 next up, our goals are:
 - [] completion of test stand for fuel and oxidizer supply
 - [] water test (low pressure)
-- [] water tet (high pressure tests)
+- [] water test (high pressure tests)
 - [] ignition test
 
 ## Points to note:
