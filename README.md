@@ -18,6 +18,6 @@ next up, our goals are:
 - [] ignition test
 
 ## Points to note:
-- -> We noticed from designing of spacer thatit is wise to design the spcer after the fabrication of the combustion chamber has taken place. This is because of the inconsistencies observed in the dimensions of the combustion chamber after fabrication tht may affect the spaer dimensional accuracy
+- -> We noticed from designing of spacer that it is wise to design the spacer after the fabrication of the combustion chamber has taken place. This prevents inconsistencies from the dimensions of the combustion chamber after fabrication.
 
 ## Citations
