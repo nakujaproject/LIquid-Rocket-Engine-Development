@@ -15,6 +15,7 @@
 #include <Wire.h>
 #include <ArduinoJson.h>
 // #include "./config.h"
+#include "./flow_control.cpp"
 
 #define ARDUINOJSON_USE_LONG_LONG 1
 #define ARDUINOJSON_USE_DOUBLE 1
@@ -411,7 +412,7 @@ void loop() {
   Serial.print("Flow rate: ");
   Serial.print(int(flowrate4));  // Print the integer part of the variable
   Serial.print("L/min");
-  Serial.print("\t");       // Print tab space
+  Serial.print("\t");     // Print tab space
   delay(5000);
 
  }
@@ -470,11 +471,4 @@ void loop() {
     
     // Publish the data to the MQTT broker
     client.publish("pressureSensors", jsonString.c_str());
-    
-    // client.loop();
-    // delay(50);
-
-   // getDesiredFlow(res, dr, nf);
-
-   // publishPressureSensorData();
-    }
+}
