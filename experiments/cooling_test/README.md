@@ -1,3 +1,5 @@
+![Cooling Test Curve](./CombinedRdngsLabelled2.PNG)
+
 ## Description
 Below are the graphs of the temperature comparisons of the coil vs the outside of the chamber walls.
 We heated the coil at 2 different rates; ~50% and ~75%.
