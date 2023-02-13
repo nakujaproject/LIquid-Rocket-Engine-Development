@@ -17,4 +17,3 @@ A second finding is that the outside temperature doesn't change spontaneously wi
 ## ToDo
 
 However, they are all well above the boiling point of water, thus we'll see how to go about that challenge when we conduct the water test.
-February 11, 2023
