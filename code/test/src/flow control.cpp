@@ -17,27 +17,9 @@ double setPoint;
 float prevError = 0;
 float integral = 0;
 
-
 const int stepsPerRevolution = 200;
 Stepper solenoidStepper(stepsPerRevolution, 8, 9, 10, 11);
 const float maxFlowRate = /* Maximum flow rate value that can be taken by the flow sensor */;
-
-float readFlowSensor(int pin) {
-  float flowRate = 0;
-  // code to read the flow sensor and return the flow rate in units/time
-  flowRate = getFlowRateFromSensor(pin);
-  return flowRate;
-}
-
-void setOxidizerOutput(float flowRate) {
-  float desiredOxidizerOutput = 0;
-  //get desired flow from user or function
-  float desiredOxidizerFlowRate = input();
-  // code to set the oxidizer output based on the flow rate input
-  float desiredOxidizerOutput = flowRate / desiredOxidizerFlowRate * 100;;
-  // Set the desired oxidizer output
-  /*Set the desired oxidizer output*/;
-}
 
 // Function to set the propellant output based on the flow rate
 void setPropellantOutput(float flowRate) {
@@ -60,18 +42,7 @@ void setOxidizerOutput(float flowRate) {
   // Use the desired oxidizer output to control the actuator
   controlActuator(desiredOxOutput, 23);  //enter desired pin number here
 }
-/*
-void controlActuator(float desiredOxOutput, int pin) {
-  // code to control the actuator to reach the desired oxidizer output
-  float currentOxOutput = 0;
-  // Read the current oxidizer output
-  currentOxOutput = readFlowSensor(pin);
-  // Calculate the error between the desired and current oxidizer output
-  float error = desiredOxOutput - currentOxOutput;
-  // Call the PID controller function to control the actuator
-  pidController(error);
-}
-*/
+
 double pidController(double input) {
   error = setPoint - input;
   integral += error;
@@ -79,8 +50,6 @@ double pidController(double input) {
   lastError = error;
   return Kp * error + Ki * integral + Kd * derivative;
 }
-
-
 
 float input() {
   float userInput;
@@ -103,7 +72,7 @@ int getFlowRateFromSensor(int pin) {
 
 void controlActuator(float desiredFlowRate, int pin) {
   // Read the current flow rate value from the flow sensor
-  float currentFlowRate = readFlowSensor(pin);
+  float currentFlowRate = getFlowRateFromSensor(pin);
   float currentStepperPosition = map(currentFlowRate, 0, maxFlowRate, 0, stepsPerRevolution);
   
   // Map the desired oxidizer output value to the number of steps to take.
