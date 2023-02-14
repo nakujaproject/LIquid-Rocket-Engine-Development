@@ -464,6 +464,14 @@ void loop() {
     doc["pressureSensor4"] = pressure4;
     doc["pressureSensor5"] = pressure5;
     doc["pressureSensor5"] = pressure5;
+    doc["temperature1"] = temperature1;
+    doc["temperature2"] = temperature2;
+    doc["temperature3"] = temperature3;
+    doc["pressvl1"] = pressvl1;
+    doc["pressvl2"] = pressvl2;
+    doc["pressvl3"] = pressvl3;
+    doc["pressvl4"] = pressvl4;
+    doc["pressvl5"] = pressvl5;
     
     // Serialize the JSON object
     String jsonString;
