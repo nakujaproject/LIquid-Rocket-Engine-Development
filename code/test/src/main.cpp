@@ -70,11 +70,11 @@ unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 
 // solenoid pins state
-bool solenoid1State= false;
-bool solenoid2State= false;
-bool solenoid3State= false;
-bool solenoid4State= false;
-bool solenoid5State= false;
+bool solenoid1State = false;
+bool solenoid2State = false;
+bool solenoid3State = false;
+bool solenoid4State = false;
+bool solenoid5State = false;
 
 //pressure sensor pins.
 const int pressureSensor1 = A0;
