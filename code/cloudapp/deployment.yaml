@@ -31,28 +31,36 @@ spec:
             claimName: influxdb-data-claim
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-data-claim2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: influxdb-grafana-mqtt-service
 spec:
+  type: NodePort
+  externalIPs:
+    - 192.168.1.100
   selector:
     app: influxdb-grafana-mqtt
   ports:
     - name: influxdb
       port: 8086
       targetPort: 8086
+      nodePort: 30000
     - name: grafana
       port: 3000
       targetPort: 3000
-  type: ClusterIP
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: influxdb-data-claim
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+      nodePort: 30001
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+      nodePort: 30002
