@@ -22,29 +22,29 @@ spec:
             value: "influxdb"
           - name: INFLUXDB_HTTP_AUTH_ENABLED
             value: "false"
-        #- name: grafana
-        #  image: grafana/grafana
-        #  ports:
-        #    - containerPort: 3000
-        #  env:
-        #  - name: GF_INSTALL_PLUGINS
-        #    value: "grafana-clock-panel,grafana-simple-json-datasource"
-        #  - name: GF_AUTH_ANONYMOUS_ENABLED
-        #    value: "true"
-        #  - name: GF_AUTH_ANONYMOUS_ORG_ROLE
-        #    value: "Viewer"
-        #  - name: GF_AUTH_BASIC_ENABLED
-        #    value: "false"
-        #  - name: GF_AUTH_DISABLE_LOGIN_FORM
-        #    value: "true"
-        #  - name: GF_AUTH_PROXY_ENABLED
-        #    value: "false"
-        #  - name: GF_AUTH_SIGNOUT_REDIRECT_URL
-        #    value: "/"
-        #  - name: GF_DATABASE_TYPE
-        #    value: "influxdb"
-        #  - name: GF_DATABASE_URL
-        #    value: "http://influxdb:8086"
+        - name: grafana
+          image: grafana/grafana
+          ports:
+            - containerPort: 3000
+          env:
+          - name: GF_INSTALL_PLUGINS
+            value: "grafana-clock-panel,grafana-simple-json-datasource"
+          - name: GF_AUTH_ANONYMOUS_ENABLED
+            value: "true"
+          - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+            value: "Viewer"
+          - name: GF_AUTH_BASIC_ENABLED
+            value: "false"
+          - name: GF_AUTH_DISABLE_LOGIN_FORM
+            value: "true"
+          - name: GF_AUTH_PROXY_ENABLED
+            value: "false"
+          - name: GF_AUTH_SIGNOUT_REDIRECT_URL
+            value: "/"
+          - name: GF_DATABASE_TYPE
+            value: "influxdb"
+          - name: GF_DATABASE_URL
+            value: "http://192.168.1.100:8086"
         #  - name: GF_DATABASE_NAME
         #    value: "mydb"
         #  - name: GF_AUTH_DISABLE_LOGIN
@@ -81,17 +81,14 @@ metadata:
 spec:
   selector:
     app: influxdb-grafana-mqtt
-  type: NodePort
+  type: LoadBalancer
   ports:
     - name: influxdb
       port: 8086
       targetPort: 8086
-      nodePort: 30001
     - name: grafana
       port: 3000
       targetPort: 3000
-      nodePort: 30002
     - name: mqtt
       port: 1883
       targetPort: 1883
-      nodePort: 30003
