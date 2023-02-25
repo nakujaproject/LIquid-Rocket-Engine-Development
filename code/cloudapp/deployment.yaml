@@ -44,7 +44,7 @@ spec:
           - name: GF_DATABASE_TYPE
             value: "influxdb"
           - name: GF_DATABASE_URL
-            value: "http://192.168.1.100:8086"
+            value: "http://xxx.xxx.x.xxx:8086"
         #  - name: GF_DATABASE_NAME
         #    value: "mydb"
         #  - name: GF_AUTH_DISABLE_LOGIN
