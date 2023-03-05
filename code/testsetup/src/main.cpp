@@ -1,66 +1,54 @@
-#include <Wire.h>
-#include <Arduino.h>
-#include <ArduinoJson.h>
-// #include <Adafruit_BMP280.h>
+#include <WiFi.h>
+#include <InfluxDbClient.h>
 
-// Adafruit_BMP280 bmp;
+// WiFi settings
+const char* ssid = "your_SSID";
+const char* password = "your_WIFI_password";
 
-unsigned long lastTime = 0;
-int flowPin = A0;
-int flowRate = 0;
-int flowRate2;
-int flowRate3;
+// InfluxDB settings
+const char* influxdbHost = "your_InfluxDB_host";
+const uint16_t influxdbPort = 8086;
+const char* influxdbDatabase = "your_InfluxDB_database";
+const char* influxdbUser = "your_InfluxDB_user";
+const char* influxdbPassword = "your_InfluxDB_password";
 
-const int flowMeter1Pin = A0; // Flow meter 1 input pin
-const int flowMeter2Pin = A2;
-
-int getFlowRateFromSensor(int pin) {
-  int flowSensorValue = analogRead(pin);
-  unsigned long currentTime = millis();
-  
-  if (currentTime - lastTime >= 1000) { // calculate flow rate once per second
-    flowRate = map(flowSensorValue, 0, 1023, 0, 60); // adjust this range based on sensor specifications
-    lastTime = currentTime;
-  }
-  return flowRate;
-}
+// Create an instance of the InfluxDB client
+InfluxDBClient influxdb(influxdbHost, influxdbPort, influxdbDatabase, influxdbUser, influxdbPassword);
 
 void setup() {
-  Serial.begin(9600);
-  Wire.begin();
-  // bmp.begin(0x76);
-  pinMode(flowMeter1Pin, INPUT);
-  pinMode(flowMeter2Pin, INPUT);
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
 
-  // set the pins for flow meters to high.
-  digitalWrite(flowMeter1Pin, INPUT_PULLUP);
-  digitalWrite(flowMeter2Pin, INPUT_PULLUP);
+  // Connect to InfluxDB
+  if (influxdb.connect()) {
+    Serial.println("Connected to InfluxDB");
+  } else {
+    Serial.println("Failed to connect to InfluxDB");
+  }
 }
 
 void loop() {
+  // Read sensor data
+  float flowrate = 25.0;
+  float pressure = 50.0;
 
+  // Prepare data point
+  Point dataPoint("temperature_humidity");
+  dataPoint.addField("pressure", pressure);
+  dataPoint.addField("flowrate", flowrate);
 
-  flowRate2 = getFlowRateFromSensor(flowMeter1Pin);
-  flowRate3 = getFlowRateFromSensor(flowMeter2Pin);
-  Serial.print("flowRate2 \n");
-  Serial.println(flowRate2);
-  Serial.print("flowRate3 \n");
-  Serial.println(flowRate3);
+  // Write data point to InfluxDB
+  if (influxdb.write(dataPoint)) {
+    Serial.println("Data point sent to InfluxDB");
+  } else {
+    Serial.println("Failed to send data point to InfluxDB");
+  }
 
-  //float temperature = bmp.readTemperature();
-  // float pressure = bmp.readPressure() / 100.0F;
-  bool isOn = true;
-
-  // Create a JSON object
-  StaticJsonDocument<100> doc;
-  doc["temperature"] = flowRate2;
-  doc["pressure"] = flowRate2;
-  doc["isOn"] = isOn;
-
-  // Serialize the JSON object to a string and send it over serial
-  String jsonStr;
-  serializeJson(doc, jsonStr);
-  Serial.println(jsonStr);
-
-  delay(1000);
+  // Wait for 10 seconds
+  delay(10000);
 }
