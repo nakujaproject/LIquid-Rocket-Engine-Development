@@ -16,8 +16,3 @@ next up, our goals are:
 - [] water test (low pressure)
 - [] water test (high pressure tests)
 - [] ignition test
-
-## Points to note:
-- -> We noticed from designing of spacer that it is wise to design the spacer after the fabrication of the combustion chamber has taken place. This prevents inconsistencies from the dimensions of the combustion chamber after fabrication.
-
-## Citations
