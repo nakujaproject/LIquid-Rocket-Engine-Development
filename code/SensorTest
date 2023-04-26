@@ -1,0 +1,172 @@
+int PressurePin_1 = A0;
+int PressurePin_2 = A1;
+int PressurePin_3 = A2;
+int PressurePin_4 = A3;
+int sv_readPin = A7;
+
+int flowPin_FUEL = 2;
+int flowPin_GN2 = 3;
+int flowPin_GOX = 18;
+
+int svPin_FUEL = 6;
+int svPin_GN2 = 7;
+int svPin_GOX = 8;
+
+// Variables
+int myInt; // Serial Input from ESP32 / Serial Monitor
+float flowrateFUEL, flowrateGN2, flowrateGOX;
+volatile long pulseFUEL, pulseGN2, pulseGOX;
+int PressureVal_1, PressureVal_2, PressureVal_3, PressureVal_4;
+
+// Boolean Variables after test is complete
+bool PressTotalBool=false;
+bool FlowTotalBool=false;
+bool SVTotalBool=false;
+
+// Final Boolean Value
+bool FinalBool=false;
+
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(PressurePin_1, INPUT_PULLUP);pinMode(PressurePin_2, INPUT_PULLUP);
+  pinMode(PressurePin_3, INPUT_PULLUP);pinMode(PressurePin_4, INPUT_PULLUP);
+
+  pinMode(svPin_FUEL, OUTPUT);digitalWrite(svPin_FUEL, LOW);
+  pinMode(svPin_GN2, OUTPUT);digitalWrite(svPin_GN2, LOW);
+  pinMode(svPin_GOX, OUTPUT);digitalWrite(svPin_GOX, LOW);
+  pinMode(sv_readPin, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(flowPin_FUEL), Function_increasePulseFUEL, RISING);
+  attachInterrupt(digitalPinToInterrupt(flowPin_GN2), Function_increasePulseGN2, RISING);
+  attachInterrupt(digitalPinToInterrupt(flowPin_GOX), Function_increasePulseGOX, RISING);
+
+  Serial.println("Ready: ");
+  Serial.println();
+}
+
+void loop() {
+ if(Serial.available()>0){
+    myInt = Serial.parseInt(SKIP_ALL, '\n');
+    if(myInt==123){
+      SensorsTest();
+      Serial.println(FinalBool);
+    }
+    else{Serial.println("Invalid command.");} 
+  }
+}
+
+// ******************************************************************************************************************************
+//                                                            FUNCTIONS
+
+
+// 1. Compilation of the 3 sensor test functions. This function is called at the loop.
+int SensorsTest(){
+  int x=0;
+  SVTotalBool=false;FinalBool=false;
+  while(x<5 && FinalBool!=true){
+    
+    Test_flowSensors(pulseFUEL, pulseGN2, pulseGOX);
+    Test_PressureSensors();
+    Test_SolenoidValves();
+    
+    if(PressTotalBool==true && FlowTotalBool==true && SVTotalBool==true){ //  PressTotalBool==true && FlowTotalBool==true && SVTotalBool==true
+      FinalBool=true;
+      Serial.println(millis());}
+    x++;
+    if(x>4 && FinalBool!=true){
+      Serial.println("Sensor Test aborted after 5 Tests. Faulty sensor(s)");
+      Serial.println(millis());}
+  }
+}
+
+// 2. Functions to autoincrement when interrupts of pulse are read.
+void Function_increasePulseFUEL(){
+  pulseFUEL++;}
+void Function_increasePulseGN2(){
+  pulseGN2++;}
+void Function_increasePulseGOX(){
+  pulseGOX++;}
+
+// 3. Test Flow Sensors
+int Test_flowSensors(int pulFUEL, int pulGN2, int pulGOX){
+  volatile long signalFUEL, signalGN2, signalGOX, lastpulseFUEL, lastpulseGN2, lastpulseGOX;
+  float FlowTotalBool = false;
+  
+  signalFUEL = pulseFUEL-lastpulseFUEL;signalGN2 = pulseGN2-lastpulseGN2;signalGOX = pulseGOX-lastpulseGOX;
+  
+  flowrateFUEL = signalFUEL/5.9334;flowrateGN2 = signalGN2/5.9334;flowrateGOX = signalGOX/5.9334;
+
+  if(flowrateFUEL==0 && flowrateGN2==0 && flowrateGOX==0)
+  {FlowTotalBool = true;Serial.println("Flow sensors working: ");
+  }else{
+    FlowTotalBool = false;
+    if(flowrateFUEL!=0){Serial.print("Flow sensor 1 error! ");Serial.print(flowrateFUEL);Serial.println(" L/min");}
+    if(flowrateGN2!=0){Serial.print("Flow sensor 2 error! ");Serial.print(flowrateGN2);Serial.println(" L/min");}
+    if(flowrateGOX!=0){Serial.print("Flow sensor 3 error! ");Serial.print(flowrateGOX);Serial.println(" L/min");}
+  }
+  lastpulseFUEL=pulseFUEL; lastpulseGN2=pulseGN2; lastpulseGOX=pulseGOX; 
+}
+  
+// 4. Test Pressure Sensors
+int Test_PressureSensors(){
+  //  THE PRESSURE VALUE RANGES WILL BE DETERMINED BY THE INITIAL CONDITIONS
+  float PressTotalBool = false;
+
+  PressureVal_1 = analogRead(PressurePin_1);PressureVal_2 = analogRead(PressurePin_2);
+  PressureVal_3 = analogRead(PressurePin_3);PressureVal_4 = analogRead(PressurePin_4);
+
+  if(PressureVal_1<150 && PressureVal_2<150 && PressureVal_3<150 && PressureVal_4<150){
+    PressTotalBool = true;
+    Serial.println("Pressure Sensors working: ");
+  }else if(PressureVal_1>150 || PressureVal_2>150 || PressureVal_3>150 || PressureVal_4>150){
+    if(PressureVal_1>150){Serial.println("Pressure Sensor 1 error.");}
+    if(PressureVal_2>150){Serial.println("Pressure Sensor 2 error.");}
+    if(PressureVal_3>150){Serial.println("Pressure Sensor 3 error.");}
+    if(PressureVal_4>150){Serial.println("Pressure Sensor 4 error.");}
+  }else{
+    Serial.println("Pressure Code Error!!!");
+  }
+}
+
+// 5. Test Solenoid Valves
+int Test_SolenoidValves(){
+  int sv_val=0;
+  int x=0; int y=0; int z=0;
+  bool SVFUEL = false; bool SVGN2 = false; bool SVGOX = false;
+
+  // SV FUEL
+  while(SVFUEL==false && SVTotalBool==false){
+    digitalWrite(svPin_FUEL, HIGH);
+    sv_val = analogRead(sv_readPin);
+    if(sv_val>30 && sv_val<70){
+      x++;
+      if(x>2){
+        SVFUEL=true;digitalWrite(svPin_FUEL, LOW);}
+    }
+  }
+  // SV GN2
+  while(SVGN2==false && SVFUEL==true && SVTotalBool==false){
+    digitalWrite(svPin_GN2, HIGH);
+    sv_val = analogRead(sv_readPin);
+    if(sv_val>30 && sv_val<70){
+      y++;
+      if(y>2){
+        SVGN2=true;digitalWrite(svPin_GN2, LOW);}
+    }
+  }
+  // SV GOX
+  while(SVGOX==false && SVGN2==true && SVTotalBool==false){
+    digitalWrite(svPin_GOX, HIGH);
+    sv_val = analogRead(sv_readPin);
+    if(sv_val>30 && sv_val<70){
+      z++;
+      if(z>2){
+        SVGOX=true;digitalWrite(svPin_GOX, LOW);}
+    }
+  }
+  if(SVFUEL==true && SVGN2==true && SVGOX==true){
+    Serial.println("Solenoid Valves working!");
+    SVTotalBool=true;
+  }
+}
