@@ -1,6 +1,7 @@
 # This directorycontains files for ansys fluent CFD simulation done on the ignitor for the liquid rocket engine.
 
 The 3-D model for the ASI is as shown below:
+![alt text](./Assets/ASI-3d.PNG)
 
 The scaled residuals obtained from simulaton. (Note: you may have to rerun the simulation to get your desired result or replicate the existing ones)
 
