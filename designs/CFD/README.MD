@@ -15,5 +15,5 @@ and for the target body as shown:
 the meshing produced by the Ansys meshing software is as shown:
 ![alt text](./Assets/meshing.png)
 
-while the same mesh as displayed within fluent simulation environment is shown
-
+while the same mesh as displayed within fluent simulation environment is shown:
+![alt text](./Assets/Screenshot 2023-07-25 112536.png)
