@@ -19,4 +19,4 @@ this may help in editing the mesh for simulation
 while the same mesh as displayed within fluent simulation environment is shown:
 ![alt text](./Assets/Screenshot%202023-07-25%20112536.png)
 
-one oulet is for propane and the other for oxygen
+one inlet is for propane and the other for oxygen
